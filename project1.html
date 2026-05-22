@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Tribes Map | Jimmy's Portfolio</title>
+    <style>
+        /* Basic Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.6; background-color: #f9f9f9; overflow-x: hidden; }
+
+        /* White Header */
+        header {
+            background: #ffffff;
+            color: #333;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+        }
+
+        nav ul { list-style: none; display: flex; gap: 30px; }
+        nav a { color: #333; text-decoration: none; font-weight: 500; }
+        nav a:hover { color: #007aff; }
+
+        /* Dropdown Navigation */
+        .dropdown { position: relative; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #ffffff;
+            list-style: none;
+            border: 1px solid #eee;
+            padding: 10px 0;
+            min-width: 150px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .dropdown:hover .dropdown-menu { display: block; }
+        .dropdown-menu li a { display: block; padding: 8px 15px; }
+        .dropdown-menu li a:hover { background-color: #f4f4f4; }
+
+        /* 1. The Container */
+        main#hero {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #ffffff; /* Starting background */
+            overflow: hidden;
+        }
+
+        /* 2. The Hero Title */
+        .hero-title {
+            font-size: 5rem;
+            letter-spacing: 8px;
+            font-weight: 900;
+            color: #ffffff; /* Invisible on white background */
+            position: relative;
+            z-index: 5; /* Ensures it sits ABOVE the rising blue water */
+            text-transform: uppercase;
+            margin: 0;
+            pointer-events: none;
+        }
+
+        /* 3. The Water Body */
+        .water-fill-bg {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 0%;
+            /* I matched this to the light blue in your screenshot */
+            background-color: #82caff; 
+            z-index: 1;
+            animation: backgroundFill 8s forwards ease-in-out;
+        }
+
+        /* 4. The Primary Wave */
+        .water-fill-bg::before {
+            content: "";
+            position: absolute;
+            top: -45px;
+            left: 0;
+            width: 200%;
+            height: 50px;
+            /* LOOK HERE: Change the fill to match #82caff (using %23 for the #) */
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><path d="M0,50 Q250,100 500,50 T1000,50 L1000,100 L0,100 Z" fill="%2382caff"/></svg>');
+            background-size: 1000px 50px;
+            background-repeat: repeat-x;
+            animation: waveMove 3s infinite linear;
+        }
+
+        /* 5. The Secondary Wave (Keeping it slightly transparent white) */
+        .water-fill-bg::after {
+            content: "";
+            position: absolute;
+            top: -35px;
+            left: 0;
+            width: 200%;
+            height: 50px;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" preserveAspectRatio="none"><path d="M0,50 Q250,100 500,50 T1000,50 L1000,100 L0,100 Z" fill="rgba(255, 255, 255, 0.2)"/></svg>');
+            background-size: 1000px 50px;
+            background-repeat: repeat-x;
+            animation: waveMove 5s infinite linear reverse;
+        }
+
+        /* 6. Animations */
+        @keyframes backgroundFill {
+            0% { height: 0%; }
+            100% { height: 100%; }
+        }
+
+        @keyframes waveMove {
+            from { transform: translateX(0); }
+            /* This MUST match the background-size (1000px) to prevent that line */
+            to { transform: translateX(-1000px); }
+        }
+
+
+        /* Project Page Content */
+        .project-content {
+            position: relative;
+            z-index: 2;
+            background-color: #ffffff;
+            padding: 120px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.15);
+            border-radius: 20px 20px 0 0;
+        }
+
+        /* Container - Added relative positioning */
+        .island-container {
+            width: 95%;           
+            max-width: 1000px;     
+            margin: 30px auto;   
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative; /* CRITICAL: Allows the tab to stick to the side */
+        }
+
+        .island-container iframe {
+            display: block;      
+            width: 100%;
+            height: 500px;       
+            border: none;
+            z-index: 1;
+        }
+
+        /* Sidebar - Positions the entire unit off-screen to the right */
+        .instruction-sidebar {
+            position: absolute;
+            right: -220px; /* Hide the white content area (260px width - 40px tab) */
+            top: 50%;
+            transform: translateY(-50%);
+            width: 260px;
+            background: rgba(255, 255, 255, 0.98);
+            display: flex; /* Aligns tab and content side-by-side */
+            flex-direction: row; 
+            z-index: 10;
+            transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-radius: 12px 0 0 12px;
+            box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            border: 1px solid #eee;
+        }
+
+        /* Slide in state */
+        .instruction-sidebar.active {
+            right: 0;
+        }
+
+        /* Blue Tab - Attached to the left side of the content */
+        .instruction-tab {
+            width: 40px;
+            height: 240px;
+            background: #ffffff;
+            color: rgb(0, 0, 0);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            border-radius: 12px 0 0 12px; /* Rounded corners on the left */
+            flex-shrink: 0;
+        }
+
+        /* Content Area - To the right of the blue tab */
+        .instruction-content {
+            padding: 20px;
+            flex-grow: 1;
+            text-align: left;
+            width: 220px;
+        }
+
+        .instruction-sidebar:hover {
+            right: 0; /* Slide in on hover */
+        }
+
+        .instruction-tab span { font-size: 1.2rem; transform: rotate(180deg); }
+        .instruction-tab p {
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            font-size: 0.75rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .instruction-content { padding: 20px; flex-grow: 1; text-align: left; }
+        .instruction-content h4 { margin-bottom: 10px; color: #000000; font-size: 0.9rem; border-bottom: 2px solid #acd1fa; display: inline-block;}
+        .instruction-content ul { list-style: none; font-size: 0.85rem; color: #475569; }
+        .instruction-content li { margin-bottom: 5px; }
+        
+
+        .why-island-section {
+            max-width: 800px;
+            text-align: left;
+            margin: 40px auto; /* Adds spacing between the map and reflection */
+            padding: 30px;
+            background-color: #f8fafc; /* Light blue-gray to make it stand out slightly */
+            border-left: 5px solid #007aff; /* Accents the section with your theme blue */
+            border-radius: 0 12px 12px 0;
+        }
+
+        .why-island-section h3 {
+            margin-bottom: 15px;
+            color: #1e293b;
+            text-transform: uppercase;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+        }
+
+        .why-island-section p {
+            font-size: 1.1rem;
+            color: #475569;
+            line-height: 1.8;
+        }
+
+        /* Strong tags match your link color */
+        .why-island-section strong {
+            color: #007aff;
+        }
+
+        /* Reflection Text */
+        .reflection-section {
+            max-width: 800px;
+            text-align: left;
+            margin-top: 40px;
+        }
+        .reflection-section h3 { margin-bottom: 15px; color: #1e293b; }
+        .reflection-section p { font-size: 1.1rem; color: #475569; }
+
+        @media (max-width: 900px) {
+            .island-container {
+                width: 95%;      /* Allow it to be wider on small screens */
+            }
+            .island-container iframe { 
+                height: 350px;   /* Even smaller height for phones */
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Jimmy</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html#hero">About</a></li>
+                <li class="dropdown">
+                    <a href="index.html#featured-work">Projects</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="project1.html">My Tribes Map</a></li>
+                        <li><a href="project2.html">Playlist</a></li>
+                        <li><a href="project3.html">Quote</a></li>
+                        <li><a href="project4.html">2 Worlds</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="hero">
+        <h2 class="hero-title">MY TRIBE MAP</h2>
+        
+        <div class="water-fill-bg"></div>
+    </main>
+
+    <main class="project-content">
+        <h2>Interactive Island</h2>
+        
+        <div class="island-container">
+            <div class="instruction-sidebar" id="instructionSidebar" onclick="toggleInstructions()">
+                <!-- The Blue Tab (Handle) -->
+                <div class="instruction-tab">
+                    <span>&#10141;</span>
+                    <p>Instruction</p>
+                </div>
+                
+                <!-- The White Content -->
+                <div class="instruction-content">
+                    <h4>How to Explore</h4>
+                    <ul>
+                        <li><strong>Rotate:</strong> Left Click + Drag</li>
+                        <li><strong>Zoom:</strong> Scroll Wheel</li>
+                        <li><strong>Pan:</strong> Right Click + Drag</li>
+                        <br>
+                        <li><strong>Click on the rotating pins for more information!</strong></li>
+                    </ul>
+                </div>
+            </div>
+
+            <iframe src="island.html" title="Interactive Island"></iframe>
+        </div>
+        
+        <div class="why-island-section">
+            <h3>Why an Island?</h3>
+            <p>
+                "I chose the symbol of an island because it perfectly mirrors my life at this stage: a territory that is not yet fully developed, representing that I am still young and constantly growing. To me, an island indicates absolute freedom where there are no rules to restrict my creativity or my future career choices. It is a self-contained ecosystem that shows how my diverse 'tribes' can coexist within a single landscape. Physically and figuratively, this island suggests that I have the potential to become someone great and build the exact life I want to lead."
+            </p>
+        </div>
+
+        <div class="reflection-section">
+            <h3>What This Map Reveals</h3>
+            <p>
+                This map is more than just a 3D visualization; it represents the connection points 
+                between the various "tribes" I navigate daily. By mapping these spaces, I am 
+                uncovering how my environment influences my identity and demonstrating how I 
+                balance technical interests with my personal community roots.
+            </p>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    <script>
+        function toggleInstructions() {
+            const sidebar = document.getElementById('instructionSidebar');
+            sidebar.classList.toggle('active');
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist | Jimmy's Portfolio</title>
+    <style>
+        /* Basic Reset */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            line-height: 1.6; 
+            background-color: #f9f9f9; 
+            overflow-x: hidden; 
+        }
+
+        /* White Header */
+        header {
+            background: #ffffff;
+            color: #333;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        nav ul { 
+            list-style: none; 
+            display: flex; 
+            gap: 30px; 
+        }
+        
+        nav a { 
+            color: #333; 
+            text-decoration: none; 
+            font-weight: 500; 
+        }
+        
+        nav a:hover { 
+            color: #007aff; 
+        }
+
+        /* Dropdown Navigation */
+        .dropdown { 
+            position: relative; 
+        }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #ffffff;
+            list-style: none;
+            border: 1px solid #eee;
+            padding: 10px 0;
+            min-width: 150px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .dropdown:hover .dropdown-menu { 
+            display: block; 
+        }
+        
+        .dropdown-menu li a { 
+            display: block; 
+            padding: 8px 15px; 
+        }
+        
+        .dropdown-menu li a:hover { 
+            background-color: #f4f4f4; 
+        }
+
+        /* 1. The Container with Background Image */
+        main#hero {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            
+            /* Change 'playlist-bg.jpg' to your actual image file name */
+            background-image: url('playlist.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment : fixed;
+        }
+
+    /* 2. The Hero Title */
+        .hero-title {
+            font-size: 10rem;
+            letter-spacing: 8px;
+            font-weight: 900;
+            color: #ffffff;
+            position: relative;
+            z-index: 5;
+            text-transform: uppercase;
+            margin: 0;
+            pointer-events: none;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            
+            /* Add this line to optimize performance during scrolling */
+            will-change: opacity; 
+        }
+
+        /* Project Page Content (Scrollable Lower Section) */
+        .project-content {
+            position: relative;
+            z-index: 2;
+            background-color: #ffffff;
+            padding: 80px 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.1);
+            border-radius: 30px 30px 0 0;
+        }
+
+        .playlist-container {
+            max-width: 850px;
+            width: 100%;
+        }
+
+        /* Playlist Header/Intro */
+        .playlist-header {
+            margin-bottom: 40px;
+        }
+
+        .section-subtitle {
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #007aff;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #111;
+            letter-spacing: -1px;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .intro-description {
+            font-size: 1.15rem;
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .divider {
+            border: none;
+            border-top: 1px solid #eee;
+            margin-bottom: 40px;
+        }
+
+        /* Track Layout */
+        .tracklist {
+            display: flex;
+            flex-direction: column;
+            gap: 45px;
+        }
+
+        .track-card {
+            display: flex;
+            gap: 25px;
+            align-items: flex-start;
+            padding-bottom: 40px;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .track-card:last-child {
+            border-bottom: none;
+        }
+
+        .track-number {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #bbb;
+            font-family: monospace;
+            padding-top: 4px;
+        }
+
+        .track-main {
+            flex: 1;
+        }
+
+        .track-info {
+            display: flex;
+            align-items: baseline;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .song-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #111;
+        }
+
+        .song-artist {
+            font-size: 1.1rem;
+            color: #666;
+            font-weight: 400;
+        }
+
+        /* Meta Badges/Tags */
+        .track-meta {
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .tag-vex { background-color: #ffeef0; color: #ff3b30; }
+        .tag-edu { background-color: #e8f5e9; color: #2e7d32; }
+        .tag-travel { background-color: #e0f2fe; color: #007aff; }
+
+        /* Spotify Widget Positioning Container */
+        .spotify-wrapper {
+            margin: 15px 0 20px 0;
+            max-width: 500px;
+            width: 100%;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+
+        /* Story Details paragraph styling */
+        .track-story {
+            font-size: 1.05rem;
+            color: #444;
+            line-height: 1.7;
+            text-align: justify;
+        }
+
+        /* Responsive Tweaks */
+        @media(max-width: 600px) {
+            .track-card { gap: 15px; }
+            .song-title { font-size: 1.25rem; }
+            .section-title { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Jimmy</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html#hero">About</a></li>
+                <li class="dropdown">
+                    <a href="index.html#featured-work">Projects</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="project1.html">My Tribes Map</a></li>
+                        <li><a href="project2.html">Playlist</a></li>
+                        <li><a href="project3.html">Quote</a></li>
+                        <li><a href="project4.html">2 Worlds</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="hero">
+        <h2 class="hero-title">PLAYLIST</h2>
+    </main>
+
+    <main class="project-content">
+        <div class="playlist-container">
+            
+            <section class="playlist-header">
+                <div class="intro-text">
+                    <p class="section-subtitle">Curated Memories</p>
+                    <h3 class="section-title">Soundtrack of My Journey</h3>
+                    <p class="intro-description">
+                        Songs to me bring back memories of a certain time period. Each song resembles a stage of my life and reminds me of what is so memorable. The song’s rhythm and style contribute to its overall mood, but more importantly, it’ s the <em>when</em> and <em>where</em> that determines the feeling that hits my heart. The following song choices represent significant moments of my life.
+                    </p>
+                </div>
+            </section>
+
+            <hr class="divider">
+
+            <div class="tracklist">
+
+                <div class="track-card">
+                    <div class="track-number">01</div>
+                    <div class="track-main">
+                        <div class="track-info">
+                            <h4 class="song-title">I Ain't Worried</h4>
+                            <p class="song-artist">OneRepublic</p>
+                        </div>
+                        <div class="track-meta">
+                            <span class="tag tag-vex">VEX IQ (2025 - 2026)</span>
+                        </div>
+                        
+                        <div class="spotify-wrapper">
+                            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/4h9wh7iOZ0GGn8QVp4RAOB?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+
+                        <p class="track-story">
+                            This song links to the stage of life where I participated in VEX IQ, specifically last season 2025 - 2026. The reason why this song is so closely related to VEX is because it was used as a background video in one of the robot reveal YouTube videos by a great team in Taiwan. But behind this literal connection, whenever I hear the song, it motivates and energizes me to keep fighting in the game. It encourages me to show what I’ve got in the match and “I ain’t worried” when facing opponents or international teams.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="track-card">
+                    <div class="track-number">02</div>
+                    <div class="track-main">
+                        <div class="track-info">
+                            <h4 class="song-title">Passionfruit</h4>
+                            <p class="song-artist">Drake</p>
+                        </div>
+                        <div class="track-meta">
+                            <span class="tag tag-edu">Boston • MIT Camp</span>
+                        </div>
+
+                        <div class="spotify-wrapper">
+                            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/5mCPDVBb16L4XQwDdbRUpz?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+
+                        <p class="track-story">
+                            This song links back to the US again but in Boston. I went there for 3 weeks of summer camp on AI, entrepreneurship, and MIT professor’s lectures. The slow-paced song calms me down so I can absorb all the knowledge given. During that time, I learned a lot that changed me into who I am now. That period taught me that students from all around the world are already approaching university and it's time for me to push as well. This experience gave me a clearer direction of who I want to become in the future.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="track-card">
+                    <div class="track-number">03</div>
+                    <div class="track-main">
+                        <div class="track-info">
+                            <h4 class="song-title">One Dance</h4>
+                            <p class="song-artist">Drake</p>
+                        </div>
+                        <div class="track-meta">
+                            <span class="tag tag-travel">New York City</span>
+                        </div>
+
+                        <div class="spotify-wrapper">
+                            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/1zi7xx7UVEFkmKfv06H8x0?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+
+                        <p class="track-story">
+                            This song brings back memories of when I visited the US, specifically New York. It was an amazing experience going to a big city that is discussed worldwide. I remember listening to this song in the Park Central Hotel, looking at Broadway for the first time, and feeling stunned by how vibrant and lively the streets were. Staring at the city at night from the top of the Rockefeller skyscraper made me realize this place offers innumerable opportunities. Like the message its lyrics are trying to convey, it encourages me to lose myself and deeply appreciate the moments.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="track-card">
+                    <div class="track-number">04</div>
+                    <div class="track-main">
+                        <div class="track-info">
+                            <h4 class="song-title">Unforgettable</h4>
+                            <p class="song-artist">French Montana ft. Swae Lee</p>
+                        </div>
+                        <div class="track-meta">
+                            <span class="tag tag-vex">VEX Worlds (2024 - 2025)</span>
+                        </div>
+
+                        <div class="spotify-wrapper">
+                            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/3B54sVLJ402zGa6Xm4YGNe?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+
+                        <p class="track-story">
+                            The title of this song “Unforgettable” describes the VEX Worlds Championship. My team fought hard to earn our spot. It was my second time qualifying since 5th grade (which was online due to COVID). While we were ecstatic, the trip hit us with a harsh reality check: our mindset was completely different from experienced global teams. We were treating it like a fun holiday, resulting in a disastrous game performance. It taught me that to win at that level, you must go all-in. Fortunately, with this experience in hand, we can try again this year.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="track-card">
+                    <div class="track-number">05</div>
+                    <div class="track-main">
+                        <div class="track-info">
+                            <h4 class="song-title">Everybody Wants to Rule the World</h4>
+                            <p class="song-artist">Tears For Fears</p>
+                        </div>
+                        <div class="track-meta">
+                            <span class="tag tag-travel">England Summer Trip</span>
+                        </div>
+
+                        <div class="spotify-wrapper">
+                            <iframe data-testid="embed-iframe" style="border-radius:12px" src="https://open.spotify.com/embed/track/2YiCMmONQcoMPX2bV1LxE0?utm_source=generator" width="100%" height="352" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                        </div>
+
+                        <p class="track-story">
+                            For all those Skibidi Toilet fans out there, they know this is the theme song for the Cameraman. Coincidentally, during that viral trend, I went to England with my school—my first time traveling abroad without my parents. It gave me a unique sense of independence. Surprisingly, during music class at our host school, the student band group I joined randomly chose this exact song to perform! This journey made me more mature, proving that childhood moments abroad with close friends are rare and beautiful.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Script to handle the scroll-fade effect -->
+    <script>
+        const heroTitle = document.querySelector('.hero-title');
+        
+        window.addEventListener('scroll', () => {
+            // Get the current vertical scroll position
+            let scrollTop = window.scrollY;
+            
+            // Define how many pixels of scrolling it takes to fully disappear.
+            // 400px means it will be completely invisible halfway down a 100vh screen.
+            let fadeRange = 400; 
+            
+            // Calculate opacity (starts at 1, goes down to 0)
+            let newOpacity = 1 - (scrollTop / fadeRange);
+            
+            // Prevent opacity from going below 0
+            if (newOpacity < 0) {
+                newOpacity = 0;
+            }
+            
+            // Apply the new opacity to the title element
+            heroTitle.style.opacity = newOpacity;
+        });
+    </script>
+
+</body>
+</html>

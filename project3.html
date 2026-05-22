@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote | Jimmy's Portfolio</title>
+    <style>
+        /* Basic Reset */
+        /* ==========================================================================
+   1. Basic Reset & Global Variables
+   ========================================================================== */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            line-height: 1.7; 
+            background-color: #faf9f6; /* Soft paper-like tone */
+            overflow-x: hidden; 
+        }
+
+        /* ==========================================================================
+        2. White Navigation Header
+        ========================================================================== */
+        header {
+            background: #ffffff;
+            color: #333;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        nav ul { 
+            list-style: none; 
+            display: flex; 
+            gap: 30px; 
+        }
+
+        nav a { 
+            color: #333; 
+            text-decoration: none; 
+            font-weight: 500; 
+        }
+
+        nav a:hover { 
+            color: #007aff; 
+        }
+
+        /* Dropdown Navigation Menu */
+        .dropdown { 
+            position: relative; 
+        }
+
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #ffffff;
+            list-style: none;
+            border: 1px solid #eee;
+            padding: 10px 0;
+            min-width: 150px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .dropdown:hover .dropdown-menu { 
+            display: block; 
+        }
+
+        .dropdown-menu li a { 
+            display: block; 
+            padding: 8px 15px; 
+        }
+
+        .dropdown-menu li a:hover { 
+            background-color: #f4f4f4; 
+        }
+
+        /* ==========================================================================
+        3. Hero Title & Code-Generated Cloud Background
+        ========================================================================== */
+        main#hero {
+            height: 100vh;
+            width: 100%;
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            /* Custom moody background gradient */
+            background: linear-gradient(180deg, #e3e7ed 0%, #4a5568 60%, #1a202c 100%);
+            background-attachment: fixed; 
+            padding: 0 12%;
+        }
+
+        /* Moving Fog Layer using CSS and the SVG noise canvas */
+        main#hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            filter: url(#fog-noise);
+            background: #ffffff;
+            mix-blend-mode: overlay;
+            opacity: 0.35;
+            animation: driftFog 60s infinite linear;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Soft dark overlay script to secure crisp text readability */
+        main#hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(26, 32, 44, 0.25);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* Text Positioning Box */
+        .quote-wrapper {
+            position: relative;
+            z-index: 5; /* Keeps text placed safely over the clouds */
+            text-align: center;
+            max-width: 850px;
+            will-change: opacity;
+        }
+
+        /* Poetic typography style targeted strictly to the quote */
+        .hero-title {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 4rem;
+            font-style: italic;
+            font-weight: 600;
+            color: #ffffff;
+            line-height: 1.3;
+            margin-bottom: 25px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .quote-author {
+            font-family: 'Playfair Display', Georgia, serif;
+            font-size: 1.3rem;
+            font-style: italic;
+            color: #e2e8f0;
+            letter-spacing: 0.5px;
+        }
+
+        /* Fog Drifting Keyframes */
+        @keyframes driftFog {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            50% { transform: translate(-5%, -5%) rotate(3deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+
+        /* ==========================================================================
+        4. Project Content Section (Lower Reflection Cards)
+        ========================================================================== */
+        .project-content {
+            position: relative;
+            z-index: 10;
+            background-color: #faf9f6; 
+            padding: 100px 5%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            box-shadow: 0 -20px 40px rgba(0,0,0,0.08);
+            border-radius: 40px 40px 0 0;
+        }
+
+        .analysis-container {
+            max-width: 700px;
+            width: 100%;
+        }
+
+        .analysis-block {
+            margin-bottom: 40px;
+        }
+
+        /* Status Labels */
+        .section-badge {
+            display: inline-block;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            color: #718096;
+            margin-bottom: 24px;
+            padding: 4px 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 3px;
+        }
+
+        .narrative-text {
+            font-size: 1.1rem;
+            color: #2d3748;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            text-align: justify;
+        }
+
+        .highlight-first {
+            font-size: 1.2rem;
+            font-weight: 500;
+            color: #1a202c;
+        }
+
+        /* Structured Personal Connection Journey Box */
+        .connection-box {
+            border-left: 3px solid #4a5568;
+            padding-left: 30px;
+            margin: 20px 0;
+            color: #2d3748; 
+        }
+
+        /* Graphic Minimalist Divider */
+        .metaphor-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 60px 0;
+        }
+
+        .metaphor-divider .line {
+            height: 1px;
+            width: 50px;
+            background: #cbd5e0;
+        }
+
+        /* ==========================================================================
+        5. Responsive Settings
+        ========================================================================== */
+        @media(max-width: 768px) {
+            .hero-title { 
+                font-size: 2.5rem; 
+            }
+            
+            .connection-box {
+                padding-left: 18px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Jimmy</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html#hero">About</a></li>
+                <li class="dropdown">
+                    <a href="index.html#featured-work">Projects</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="project1.html">My Tribes Map</a></li>
+                        <li><a href="project2.html">Playlist</a></li>
+                        <li><a href="project3.html">Quote</a></li>
+                        <li><a href="project4.html">2 Worlds</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="hero">
+        <div class="quote-wrapper">
+            <h2 class="hero-title">“You have to leave this reservation.”</h2>
+            <p class="quote-author">— Mr. P, <em>The Absolutely True Diary of a Part-Time Indian</em></p>
+        </div>
+    </main>
+
+    <main class="project-content">
+        <div class="analysis-container">
+            
+            <section class="analysis-block literary-context">
+                <span class="section-badge">The Catalyst</span>
+                <p class="narrative-text highlight-first">
+                    The most memorable quote of all is <strong>"You have to leave this reservation”</strong>. It is said by Mr. P, Junior’s geometry teacher, when he visited Junior after the incident. The literal meaning of the quote is telling Junior to study outside the reservation. 
+                </p>
+            </section>
+
+            <div class="metaphor-divider">
+                <div class="line line-left"></div>
+                <div class="symbol">✦</div>
+                <div class="line line-right"></div>
+            </div>
+
+            <section class="analysis-block personal-connection">
+                <span class="section-badge badge-personal">Personal Journey</span>
+                
+                <div class="connection-box">
+                    <p class="narrative-text">
+                        This reminds me of my own life. If I had stayed in Taiwan and chosen Taiwan’s traditional education system, my future would probably end up restricted to one predictable track. However, my parents decided to put me in the international system which ultimately leads to studying abroad. This is completely different from taking tests and memorizing knowledge. 
+                    </p>
+                    <p class="narrative-text">
+                        What foreign colleges look for is students who are both academically elite but also have extracurricular activities and interest in certain fields. This allows me to showcase my passion in golf, robotics, and other sports where I have a level of understanding and skill.
+                    </p>
+                    <p class="narrative-text">
+                        Another reason that my childhood is so vibrant and full of adventure is that my parents take me to places outside of Taiwan where I experience things differently. For example, I went to Australia and lived there for one and a half months to experience their lifestyle. I studied for a month in the school and learned about some of their cultural uniqueness. These experiences allow me to gain entirely new perspectives. 
+                    </p>
+                    <p class="narrative-text">
+                        Traveling does not always mean play. I mean, of course, trips are meant to be fun but also helpful for your future. For instance, last summer I went to the states and took a look at big companies like Apple, Google, and Meta. I can feel the tech atmosphere and what I want to achieve in the future. I also visited universities like Stanford, Berkeley, Brown, Yale, MIT, and Harvard.
+                    </p>
+                    <p class="narrative-text">
+                        Sure, domestic education is great in a different way but I’m not sure if I can withstand the pressure and solely focus on academics. I know I’m an active kid and so I participate in numerous sport activities like, as mentioned, surfing, golf, and more. The quote reflects both its structural significance in the story and the impact it has on how I view my own life path.
+                    </p>
+                </div>
+            </section>
+
+        </div>
+    </main>
+
+    <script>
+        const quoteWrapper = document.querySelector('.quote-wrapper');
+        
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.scrollY;
+            let fadeRange = 500; 
+            let newOpacity = 1 - (scrollTop / fadeRange);
+            
+            if (newOpacity < 0) {
+                newOpacity = 0;
+            }
+            
+            quoteWrapper.style.opacity = newOpacity;
+        });
+    </script>
+
+    <svg style="position: absolute; width: 0; height: 0;">
+        <filter id="fog-noise">
+            <feTurbulence type="fractalNoise" baseFrequency="0.015" numOctaves="4" stitchTiles="stitch" />
+            <feColorMatrix type="matrix" values="1 0 0 0 1  0 1 0 0 1  0 0 1 0 1  0 0 0 0.5 0" />
+        </filter>
+    </svg>
+
+</body>
+</html>

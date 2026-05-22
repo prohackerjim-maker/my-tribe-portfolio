@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Two Worlds | Jimmy's Portfolio</title>
+    <style>
+        /* Basic Reset & Global Rules */
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+        }
+        
+        body { 
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
+            line-height: 1.7; 
+            background-color: #faf9f6; 
+            color: #333;
+            overflow-x: hidden; 
+        }
+
+        /* Fixed Navigation Header */
+        header {
+            background: #ffffff;
+            color: #333;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+        }
+
+        nav ul { 
+            list-style: none; 
+            display: flex; 
+            gap: 30px; 
+        }
+        
+        nav a { 
+            color: #333; 
+            text-decoration: none; 
+            font-weight: 500; 
+        }
+        
+        nav a:hover { 
+            color: #007aff; 
+        }
+
+        /* Dropdown Navigation Menu */
+        .dropdown { 
+            position: relative; 
+        }
+        
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #ffffff;
+            list-style: none;
+            border: 1px solid #eee;
+            padding: 10px 0;
+            min-width: 150px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        
+        .dropdown:hover .dropdown-menu { 
+            display: block; 
+        }
+        
+        .dropdown-menu li a { 
+            display: block; 
+            padding: 8px 15px; 
+        }
+        
+        .dropdown-menu li a:hover { 
+            background-color: #f4f4f4; 
+        }
+
+        /* The Split-Screen Layout Container */
+        .split-hero-container {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+            padding-top: 70px; /* Offset for header */
+        }
+
+        /* Shared Side Styling */
+        .split-side {
+            flex: 1;
+            padding: 60px 6%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+        }
+
+        /* LEFT SIDE: World 1 (Calmer Me) */
+        .side-world1 {
+            background-color: #ffffff;
+            border-right: 1px solid #eee;
+        }
+
+        /* RIGHT SIDE: World 2 (Active? Extreme?) */
+        .side-world2 {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        }
+
+        /* Dynamic hover effects to emphasize "switching states" */
+        .split-side:hover {
+            flex: 1.2;
+        }
+
+        /* Typography Structure */
+        .world-badge {
+            display: inline-block;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding: 4px 12px;
+            border-radius: 4px;
+            width: fit-content;
+        }
+
+        .badge-w1 {
+            background-color: #f4f5f7;
+            color: #4a5568;
+        }
+
+        .badge-w2 {
+            background-color: #e0f2fe;
+            color: #007aff;
+        }
+
+        .world-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            margin-bottom: 25px;
+            line-height: 1.2;
+            color: #111;
+        }
+
+        .world-text {
+            font-size: 1.12rem;
+            color: #444;
+            margin-bottom: 20px;
+            text-align: justify;
+        }
+
+        /* IMAGE GRID LAYOUTS */
+        .image-gallery {
+            display: grid;
+            gap: 15px;
+            margin-top: auto; /* Pushes gallery to the bottom if content is short */
+            padding-top: 30px;
+        }
+
+        /* World 1 Layout: 1 large clean display image */
+        .gallery-w1 {
+            grid-template-columns: 1fr;
+        }
+
+        /* World 2 Layout: 3 column photo cards */
+        .gallery-w2 {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .gallery-item {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: #eaeaea; /* Placeholder color before images load */
+        }
+
+        /* Frame aspect ratios to keep pictures uniformly balanced */
+        .gallery-w1 .gallery-item {
+            aspect-ratio: 16 / 9;
+            max-width: 100%;
+        }
+
+        .gallery-w2 .gallery-item {
+            aspect-ratio: 3 / 4;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+            transition: transform 0.5s ease;
+        }
+
+        /* Micro-interactions when hovering directly on photos */
+        .gallery-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .gallery-item:hover img {
+            transform: scale(1.05);
+        }
+
+        /* Photo Caption Overlays */
+        .photo-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            padding: 15px 10px 10px;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+            color: #ffffff;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .gallery-item:hover .photo-caption {
+            opacity: 1;
+        }
+
+        /* Conclusion Banner (Spans across the bottom) */
+        .conclusion-section {
+            background-color: #1a202c;
+            color: #ffffff;
+            padding: 80px 10%;
+            text-align: center;
+            position: relative;
+            z-index: 10;
+        }
+
+        .conclusion-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .conclusion-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #fff;
+            letter-spacing: -0.5px;
+        }
+
+        .conclusion-text {
+            font-size: 1.2rem;
+            color: #a0aec0;
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        /* Responsive Breakdowns for Mobile Devices */
+        @media(max-width: 900px) {
+            .split-hero-container {
+                flex-direction: column;
+            }
+            .split-side {
+                padding: 50px 8%;
+                min-height: auto;
+            }
+            .split-side:hover {
+                flex: 1; /* Turn off expansion logic on touchscreens */
+            }
+            .world-title {
+                font-size: 2rem;
+            }
+            .gallery-w2 {
+                grid-template-columns: 1fr; /* Stack adventure pics vertically on mobile */
+                gap: 20px;
+            }
+            .gallery-w2 .gallery-item {
+                aspect-ratio: 16 / 10;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Jimmy</h1>
+        <nav>
+            <ul>
+                <li><a href="index.html#hero">About</a></li>
+                <li class="dropdown">
+                    <a href="index.html#featured-work">Projects</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="project1.html">My Tribes Map</a></li>
+                        <li><a href="project2.html">Playlist</a></li>
+                        <li><a href="project3.html">Quote</a></li>
+                        <li><a href="project4.html">Two Worlds</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="split-hero-container">
+        
+        <section class="split-side side-world1">
+            <span class="world-badge badge-w1">The Structured Sphere</span>
+            <h2 class="world-title">World 1 - Calmer me</h2>
+            <p class="world-text">
+                The first version of me is at school, locking in at school work and taking courses. I try to finish every work on time and try to keep out of trouble. Before tests, I will definitely go through all of the covered lessons. When having competitions, I go all in and be as competitive as possible.
+            </p>
+            <p class="world-text">
+                I would describe myself as steady and responsible, not too active and just trying to get things done.
+            </p>
+
+            <div class="image-gallery gallery-w1">
+                <div class="gallery-item">
+                    <img src="focusing.JPG" alt="Focusing in competition!">
+                    <div class="photo-caption">Focusing in competition!</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="split-side side-world2">
+            <span class="world-badge badge-w2">The Endless Horizon</span>
+            <h2 class="world-title">World 2 - Active? Extreme?</h2>
+            <p class="world-text">
+                The real me is an active and sporty boy who plays multiple sports and loves traveling. He likes to play golf, surf and snowboard. Trying new things and overcoming fears becomes an obsession for him, for example, overcoming my fear of heights by trying expert snowboarding slopes or trying indoor skydiving in Singapore. Currently, I’m learning tennis and in the future there will be more skills I’ll learn.
+            </p>
+            <p class="world-text">
+                Traveling on the other hand is like a mentor to me. Every trip, I’ll learn something new and help me grow. Last year, I went to the states. As you’ll probably see in other parts of the project, I learned a lot. One being that there are always people who are better than you and so you have to keep up. But in general, the trips were fun and enjoyable. It makes me want to hold on to them longer. However, summer eventually comes to an end.
+            </p>
+
+            <div class="image-gallery gallery-w2">
+                <div class="gallery-item">
+                    <img src="snowboarding.jpeg" alt="Snowboarding down slopes">
+                    <div class="photo-caption">Snowboarding</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="skydive.JPG" alt="Indoor skydiving experience">
+                    <div class="photo-caption">Skydiving</div>
+                </div>
+                <div class="gallery-item">
+                    <img src="surfing.JPG" alt="Surfing on the ocean waves">
+                    <div class="photo-caption">Surfing</div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <footer class="conclusion-section">
+        <div class="conclusion-container">
+            <h3 class="conclusion-title">The Gravitational Shift</h3>
+            <p class="conclusion-text">
+                "The two worlds that orbit around me are completely different. As shown, the content of World 2 is significantly larger than World 1, meaning that the gravitational force of World 2 is larger as well. Therefore, I struggle to change my state of mind from summer/winter vacation to school semester because my heart is hold on tight to the fun and ecstatic moments. And so learning how to balance the two is really a challenge to me and something I'm still learning. Currently though, I try to think positively and build up the mindset that vacation will eventually come. But before a better solution is found, this mindset is the solution right now."
+            </p>
+        </div>
+    </footer>
+
+</body>
+</html>

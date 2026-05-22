@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Royale Island - Surfer Paradise</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #87CEEB; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    canvas { display: block; }
+
+    #info-panel {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 450px;
+      min-height: 250px;
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(8px);
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+      display: none;
+      flex-direction: column;
+      padding: 25px;
+      z-index: 100;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+    }
+
+    #panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      border-bottom: 2px solid #00ffff;
+      padding-bottom: 10px;
+    }
+
+    #panel-title { font-size: 26px; font-weight: bold; color: #2c3e50; }
+    #panel-content { font-size: 16px; color: #34495e; line-height: 1.6; }
+
+    #close-btn {
+      background: #ff4757; color: white; border: none; padding: 8px 16px;
+      border-radius: 8px; cursor: pointer; font-weight: bold;
+      transition: transform 0.2s, background 0.2s;
+    }
+    #close-btn:hover { background: #ff6b81; transform: scale(1.05); }
+  </style>
+</head>
+<body>
+
+  <div id="info-panel">
+    <div id="panel-header">
+      <div id="panel-title">Tribe Name</div>
+      <button id="close-btn">Close</button>
+    </div>
+    <div id="panel-content">Content goes here...</div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.134.0/examples/js/controls/OrbitControls.js"></script>
+
+  <script>
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x87CEEB); 
+
+    const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 15000);
+    camera.position.set(1600, 1100, 1600);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    document.body.appendChild(renderer.domElement);
+
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+
+    const raycaster = new THREE.Raycaster();
+    const mouse = new THREE.Vector2();
+
+    scene.add(new THREE.AmbientLight(0xffffff, 0.7));
+    const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+    sun.position.set(500, 1000, 500);
+    scene.add(sun);
+
+    const locationData = {
+      "Snow Mountain": { cardTitle: "Snowboarding Tribe", content: "Like surfing, snowboarding is a must-do on the winter must-do list. It's fun when you conquer a steep slope and can do tricks on it. It's crazy how I managed to master snowboarding, having only been to Korea and Japan 4 times. The speed and the snowy atmosphere immediately leave all of the burdens behind." },
+      "Putting Green": { cardTitle: "Golfing Tribe", content: "I started golf early, like during 3rd grade, when I joined the school club. Since then, I have started participating in golf competitions and have made lots of friends along the way. It's a wonderful experience because I get to travel and play different courses, for example, Thailand, the US and Bali, Indonesia." },
+      "Surf Shops": { cardTitle: "Surfing Tribe", content: "I learned surfing back when I was in elementary school in 台東, then in Yilan. Then I went to the Gold Coast in Australia for one summer, started sixth grade, and have been going to Bali, Indonesia, continuously. Surfing to me is exhilarating, but also a chance to be aware of the danger of the sea." },
+      "Home": { cardTitle: "My Family", content: "There is nothing more supportive than my family, and only three of us belong to this tribe. My parents provide a warm shelter and a high-quality education to better prepare me for the future challenges ahead. More importantly, they give me space to work on achieving my goals." },
+      "Robotic Institute": { cardTitle: "VEX Tribe", content: "I started VEX IQ in elementary and was involved until 9th grade, when I moved on to the next level, VEX V5. In other words, I dedicated half of my life to this competition. More importantly, I felt great pleasure learning from other elites in this field." }
+    };
+
+    const infoPanel = document.getElementById('info-panel');
+    const panelTitle = document.getElementById('panel-title');
+    const panelContent = document.getElementById('panel-content');
+    const closeBtn = document.getElementById('close-btn');
+    closeBtn.addEventListener('click', () => { infoPanel.style.display = 'none'; });
+
+    function createShape(rX, rZ) {
+      const s = new THREE.Shape();
+      for (let i = 0; i < 180; i++) {
+        const a = (i / 180) * Math.PI * 2;
+        const x = Math.cos(a) * (rX + Math.sin(a * 4) * 60);
+        const z = Math.sin(a) * (rZ + Math.cos(a * 3) * 50);
+        if (i === 0) s.moveTo(x, z); else s.lineTo(x, z);
+      }
+      return s;
+    }
+
+    const water = new THREE.Mesh(new THREE.CircleGeometry(7500, 32), new THREE.MeshLambertMaterial({ color: 0x0077be, transparent: true, opacity: 0.8 }));
+    water.rotation.x = -Math.PI / 2; water.position.y = -5; scene.add(water);
+
+    const sandMesh = new THREE.Mesh(new THREE.ExtrudeGeometry(createShape(950, 850), { depth: 20, bevelEnabled: false }), new THREE.MeshLambertMaterial({ color: 0xe9d4a8 }));
+    sandMesh.rotation.x = -Math.PI / 2; scene.add(sandMesh);
+
+    const grassMesh = new THREE.Mesh(new THREE.ExtrudeGeometry(createShape(750, 650), { depth: 25, bevelEnabled: false }), new THREE.MeshLambertMaterial({ color: 0x3eb14a }));
+    grassMesh.rotation.x = -Math.PI / 2; grassMesh.position.y = 15; scene.add(grassMesh);
+
+    function createPath(pts) {
+      const curve = new THREE.CatmullRomCurve3(pts);
+      const tube = new THREE.Mesh(new THREE.TubeGeometry(curve, 64, 12, 8, false), new THREE.MeshLambertMaterial({ color: 0x95a5a6 }));
+      tube.position.y = 17; scene.add(tube);
+    }
+    createPath([new THREE.Vector3(250, 0, 300), new THREE.Vector3(350, 0, 100), new THREE.Vector3(400, 0, -150)]);
+    createPath([new THREE.Vector3(250, 0, 300), new THREE.Vector3(0, 0, 200), new THREE.Vector3(-200, 0, 0)]);
+
+    function createTree(x, z) {
+      const tree = new THREE.Group();
+      const trunk = new THREE.Mesh(new THREE.CylinderGeometry(4, 6, 25), new THREE.MeshLambertMaterial({ color: 0x5d4037 }));
+      trunk.position.y = 12.5; tree.add(trunk);
+      const leaves = new THREE.Mesh(new THREE.SphereGeometry(15, 6, 6), new THREE.MeshLambertMaterial({ color: 0x2e7d32 }));
+      leaves.position.y = 30; tree.add(leaves);
+      tree.position.set(x, 35, z); scene.add(tree);
+    }
+    const treeCoords = [ [150,350],[350,350],[250,450],[180,420],[380,280],[520,-100],[550,-200],[400,-280],[480,-50],[320,-220],[-100,100],[-350,-50],[-50,50],[-150,-120],[-300,100] ];
+    for(let i=0; i<45; i++) {
+        const radius = 650; const angle = Math.random() * Math.PI * 2;
+        const dist = 150 + Math.random() * (radius - 150);
+        treeCoords.push([Math.cos(angle)*dist, Math.sin(angle)*dist]);
+    }
+    treeCoords.forEach(c => createTree(c[0], c[1]));
+
+    const clouds = [];
+    function createCloud(x, y, z) {
+      const group = new THREE.Group();
+      const mat = new THREE.MeshLambertMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
+      for(let i=0; i<5; i++) {
+        const part = new THREE.Mesh(new THREE.SphereGeometry(30 + Math.random()*25, 8, 8), mat);
+        part.position.set(i*30, Math.random()*15, Math.random()*15); group.add(part);
+      }
+      group.position.set(x, y, z); scene.add(group); clouds.push(group);
+    }
+    [ [600,500,-400], [-600,450,200], [0,600,600], [-700,550,-500], [700,600,200] ].forEach(p => createCloud(p[0],p[1],p[2]));
+
+    const boats = [];
+    function createDetailedBoat(x, z, color) {
+      const group = new THREE.Group();
+      const hull = new THREE.Mesh(new THREE.BoxGeometry(70, 20, 35), new THREE.MeshLambertMaterial({ color: 0xecf0f1 }));
+      hull.position.y = 5; group.add(hull);
+      const cabin = new THREE.Mesh(new THREE.BoxGeometry(35, 15, 25), new THREE.MeshLambertMaterial({ color: color }));
+      cabin.position.set(-10, 20, 0); group.add(cabin);
+      const mast = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 30), new THREE.MeshLambertMaterial({ color: 0x333333 }));
+      mast.position.set(20, 25, 0); group.add(mast);
+      group.position.set(x, 5, z); scene.add(group); boats.push(group);
+    }
+    
+    // Kept the two standard detailed boats
+    createDetailedBoat(-800, 600, 0x3498db); 
+    createDetailedBoat(1000, -800, 0xe74c3c);
+
+    const surfers = [];
+    function createSurfer(x, z, boardColor) {
+        const group = new THREE.Group();
+        const board = new THREE.Mesh(new THREE.CylinderGeometry(5, 5, 25, 12), new THREE.MeshLambertMaterial({color: boardColor}));
+        board.rotation.x = Math.PI / 2; board.scale.x = 0.1; group.add(board);
+        const body = new THREE.Mesh(new THREE.BoxGeometry(6, 12, 4), new THREE.MeshLambertMaterial({color: 0x333333}));
+        body.position.y = 8; group.add(body);
+        const head = new THREE.Mesh(new THREE.SphereGeometry(3.5), new THREE.MeshLambertMaterial({color: 0xffdbac}));
+        head.position.y = 15; group.add(head);
+        group.position.set(x, 2, z); scene.add(group); surfers.push(group);
+    }
+    
+    // MOVING SURFERS FURTHER OUT: 
+    // Increased the distance from the island shore (further into the blue water)
+    const surferColors = [0xff0000, 0x00ff00, 0xffff00, 0xff00ff, 0x00ffff, 0xffa500];
+    for(let i = 0; i < 15; i++) {
+        const rx = -1100 + (Math.random() * 250); // Shifted from -850 to -1100
+        const rz = 500 + (Math.random() * 350);  // Shifted from 350 to 500
+        const color = surferColors[Math.floor(Math.random() * surferColors.length)];
+        createSurfer(rx, rz, color);
+    }
+
+    const mountain = new THREE.Group();
+    mountain.add(new THREE.Mesh(new THREE.ConeGeometry(180, 450, 8), new THREE.MeshLambertMaterial({ color: 0x555555 })));
+    mountain.children[0].position.y = 225;
+    mountain.add(new THREE.Mesh(new THREE.ConeGeometry(95, 230, 8), new THREE.MeshLambertMaterial({ color: 0xffffff })));
+    mountain.children[1].position.y = 335;
+    mountain.position.set(0, 15, -350); scene.add(mountain);
+
+    const institute = new THREE.Group();
+    institute.add(new THREE.Mesh(new THREE.CylinderGeometry(50, 60, 20, 8), new THREE.MeshStandardMaterial({ color: 0x2c3e50, roughness: 0.2 })));
+    institute.children[0].position.y = 10;
+    const core = new THREE.Mesh(new THREE.CylinderGeometry(45, 45, 10, 8), new THREE.MeshStandardMaterial({ color: 0x00ffff, emissive: 0x00ffff, emissiveIntensity: 1.5 }));
+    core.position.y = 25; institute.add(core);
+    const upper = new THREE.Mesh(new THREE.CylinderGeometry(30, 45, 30, 8), new THREE.MeshStandardMaterial({ color: 0xbdc3c7, metalness: 0.8 }));
+    upper.position.y = 45; institute.add(upper);
+    institute.position.set(400, 35, -150); scene.add(institute);
+
+    const house = new THREE.Group();
+    house.add(new THREE.Mesh(new THREE.BoxGeometry(50, 40, 50), new THREE.MeshLambertMaterial({ color: 0xffffff })));
+    house.children[0].position.y = 20;
+    const hRoof = new THREE.Mesh(new THREE.BoxGeometry(55, 5, 55), new THREE.MeshLambertMaterial({ color: 0x333333 }));
+    hRoof.position.y = 42; house.add(hRoof);
+    house.position.set(250, 35, 300); scene.add(house);
+
+    const puttingGreen = new THREE.Group();
+    const greenCircle = new THREE.Mesh(new THREE.CylinderGeometry(80, 82, 12, 32), new THREE.MeshLambertMaterial({ color: 0x7cfc00 }));
+    greenCircle.position.y = 6; puttingGreen.add(greenCircle);
+    const pole = new THREE.Mesh(new THREE.CylinderGeometry(1, 1, 40), new THREE.MeshLambertMaterial({ color: 0xffffff }));
+    pole.position.set(-15, 32, 0); puttingGreen.add(pole);
+    const flag = new THREE.Mesh(new THREE.BoxGeometry(12, 8, 1), new THREE.MeshLambertMaterial({ color: 0xff0000 }));
+    flag.position.set(-8, 48, 0); puttingGreen.add(flag);
+    puttingGreen.position.set(-200, 35, 0); scene.add(puttingGreen);
+
+    function createSurfShop(x, z, color) {
+      const g = new THREE.Group();
+      g.add(new THREE.Mesh(new THREE.BoxGeometry(50, 35, 35), new THREE.MeshLambertMaterial({ color: 0xadd8e6 })));
+      g.children[0].position.y = 17.5;
+      g.add(new THREE.Mesh(new THREE.BoxGeometry(60, 8, 45), new THREE.MeshLambertMaterial({ color: color })));
+      g.children[1].position.y = 38;
+      g.position.set(x, 10, z); return g;
+    }
+    scene.add(createSurfShop(-720, 400, 0xff4500)); scene.add(createSurfShop(-600, 550, 0x00ffcc));
+
+    const animatedIcons = [];
+    function makeLabeledMarker(text, labelSize, iconSize, x, y, z) {
+      const group = new THREE.Group();
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      canvas.width = 1024; canvas.height = 256;
+      ctx.fillStyle = '#000000'; ctx.beginPath(); ctx.roundRect(152, 48, 720, 160, 40); ctx.fill();
+      ctx.font = 'bold 88px Arial'; ctx.fillStyle = 'white'; ctx.textAlign = 'center';
+      ctx.fillText(text, 512, 160);
+      const sprite = new THREE.Sprite(new THREE.SpriteMaterial({ map: new THREE.CanvasTexture(canvas) }));
+      sprite.scale.set(labelSize, labelSize/4, 1); group.add(sprite);
+      const icon = new THREE.Mesh(new THREE.OctahedronGeometry(iconSize, 0), new THREE.MeshPhongMaterial({ color: 0x00ffff, emissive: 0x00ffff }));
+      icon.position.y = labelSize / 8 + 40; icon.userData = { name: text }; 
+      group.add(icon); animatedIcons.push(icon);
+      group.position.set(x, y, z); scene.add(group);
+    }
+    const unifiedSize = 400; const iconS = 35;
+    makeLabeledMarker("Snow Mountain", 400, 35, 0, 650, -350);
+    makeLabeledMarker("Surf Shops", 400, 35, -700, 200, 400);
+    makeLabeledMarker("Robotic Institute", 400, 35, 400, 200, -150);
+    makeLabeledMarker("Home", 400, 35, 250, 180, 300);
+    makeLabeledMarker("Putting Green", 400, 35, -200, 170, 0);
+
+    window.addEventListener('mousemove', (e) => { mouse.x = (e.clientX / window.innerWidth) * 2 - 1; mouse.y = -(e.clientY / window.innerHeight) * 2 + 1; });
+    window.addEventListener('click', () => {
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(animatedIcons);
+      if (hits.length > 0) {
+        const labelName = hits[0].object.userData.name;
+        const data = locationData[labelName];
+        panelTitle.innerText = data.cardTitle;
+        panelContent.innerText = data.content;
+        infoPanel.style.display = 'flex';
+      }
+    });
+
+    function animate() {
+      requestAnimationFrame(animate);
+      const t = Date.now() * 0.001;
+      clouds.forEach((c, i) => { c.position.x += Math.sin(t + i) * 0.2; });
+      boats.forEach((b, i) => { b.position.y = 5 + Math.sin(t + i) * 2; b.rotation.z = Math.sin(t * 0.5 + i) * 0.05; });
+      surfers.forEach((s, i) => { 
+        s.position.y = 2 + Math.sin(t*2 + i) * 1.5; 
+        s.rotation.y = Math.sin(t + i) * 0.1; 
+      });
+      raycaster.setFromCamera(mouse, camera);
+      const hits = raycaster.intersectObjects(animatedIcons);
+      animatedIcons.forEach(icon => {
+        icon.rotation.y = t * 2; icon.scale.set(1, 1, 1);
+        icon.position.y = 90 + Math.sin(t * 4) * 10;
+        icon.material.color.set(0x00ffff); icon.material.emissive.set(0x00ffff);
+      });
+      if (hits.length > 0) {
+        const hit = hits[0].object; hit.scale.set(1.8, 1.8, 1.8);
+        hit.material.color.set(0xff0000); hit.material.emissive.set(0xff0000);
+        document.body.style.cursor = 'pointer';
+      } else { document.body.style.cursor = 'default'; }
+      controls.update(); renderer.render(scene, camera);
+    }
+    animate();
+    window.addEventListener('resize', () => { camera.aspect = window.innerWidth / window.innerHeight; camera.updateProjectionMatrix(); renderer.setSize(window.innerWidth, window.innerHeight); });
+  </script>
+</body>
+</html>

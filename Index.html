@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jimmy's Portfolio</title>
+    <style>
+        /* Basic Reset */
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; line-height: 1.6; background-color: #f9f9f9; overflow-x: hidden; }
+
+        /* White Header */
+        header {
+            background: #ffffff;
+            color: #333;
+            padding: 1rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+            position: fixed;
+            width: 100%;
+            z-index: 100;
+        }
+
+        nav ul { list-style: none; display: flex; gap: 30px; }
+        nav a { color: #333; text-decoration: none; font-weight: 500; }
+        nav a:hover { color: #007aff; }
+
+        /* Dropdown Navigation */
+        .dropdown { position: relative; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #ffffff;
+            list-style: none;
+            border: 1px solid #eee;
+            padding: 10px 0;
+            min-width: 150px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+        .dropdown:hover .dropdown-menu { display: block; }
+        .dropdown-menu li a { display: block; padding: 8px 15px; }
+        .dropdown-menu li a:hover { background-color: #f4f4f4; }
+
+        /* Sticky Hero Section */
+        main {
+            height: 100vh;
+            position: sticky;
+            top: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #f8fafc;
+            overflow: hidden;
+            z-index: 1;
+        }
+
+        #particles-js { position: absolute; width: 100%; height: 100%; top: 0; left: 0; z-index: 1; }
+
+        .hero-title {
+            font-size: 3.5rem;
+            letter-spacing: 3px;
+            font-weight: 800;
+            text-transform: uppercase;
+            color: #1e293b;
+            position: relative;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        /* About Section */
+        .content-section {
+            background-color: #ffffff;
+            padding: 80px 20px;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+            box-shadow: 0 -10px 20px rgba(0,0,0,0.1);
+            min-height: auto;
+        }
+
+        /* Featured Work Section: Centered Layout */
+        .featured-work-section {
+            background-color: #000;
+            color: #fff;
+            padding: 80px 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Centering the section */
+        .featured-split-container {
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto; 
+            gap: 60px;
+            align-items: center;
+        }
+
+        .featured-text-side {
+            flex: 1.2;
+            text-align: left;
+        }
+
+        .featured-right-side {
+            flex: 2;
+            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            background-color: #111;
+        }
+
+        /* The Horizontal Scrolling Panel */
+        .featured-preview-panel {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            padding: 20px 0;
+            cursor: grab;
+            display: flex;
+        }
+
+        .preview-content {
+            display: flex;
+            gap: 20px;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .preview-wrapper {
+            flex: 0 0 300px;
+            min-width: 300px;
+            position: relative;
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #333;
+        }
+
+        .preview-content img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .preview-wrapper p {
+            font-size: 0.9rem;
+            color: #ccc;
+            padding: 10px 15px;
+            text-align: left;
+            margin: 0;
+            background: #111;
+        }
+
+        /* Conclusion Section Styles */
+        .conclusion-section {
+            background-color: #ffffff;
+            padding: 120px 10%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 1px solid #eee;
+            position: relative;
+            z-index: 10;
+        }
+
+        .conclusion-container {
+            max-width: 750px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .conclusion-title {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: #111111;
+            margin-bottom: 35px;
+            letter-spacing: -0.5px;
+            text-transform: uppercase;
+        }
+
+        .conclusion-text {
+            font-size: 1.15rem;
+            color: #444444;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            text-align: justify;
+            text-justify: inter-word;
+        }
+
+        .footer-divider {
+            width: 50px;
+            height: 3px;
+            background-color: #007aff; /* Using your signature blue */
+            margin: 50px auto 30px auto;
+        }
+
+        .footer-credit {
+            font-size: 0.85rem;
+            color: #aaa;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .container { max-width: 700px; margin: 0 auto; }
+        .content-section h2 { margin-bottom: 25px; color: #1e293b; }
+        .content-section p { font-size: 1.2rem; color: #475569; margin-bottom: 20px; line-height: 1.8; }
+        
+        .featured-text-side h2 { margin-bottom: 20px; color: #fff; }
+        .featured-text-side p { font-size: 1.1rem; color: #ccc; line-height: 1.8; margin-bottom: 1.5rem; }
+
+        @media (max-width: 900px) {
+            .featured-split-container { flex-direction: column; text-align: center; gap: 40px; }
+            .featured-text-side { flex: none; text-align: center; max-width: 700px; margin: 0 auto; }
+            .featured-right-side { flex: none; width: 100%; max-width: 700px; margin: 0 auto; }
+            .preview-wrapper { flex: 0 0 80%; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Jimmy</h1>
+        <nav>
+            <ul>
+                <li><a href="Index.html#hero">About</a></li>
+                <li class="dropdown">
+                    <a href="Index.html#featured-work">Projects</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="project1.html">My Tribes Map</a></li>
+                        <li><a href="project2.html">Playlist</a></li>
+                        <li><a href="project3.html">Quote</a></li>
+                        <li><a href="project4.html">2 Worlds</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </header>
+
+    <main id="hero">
+        <div id="particles-js"></div>
+        <h2 class="hero-title">MY TRIBE PORTFOLIO</h2>
+    </main>
+
+    <section id="about" class="content-section">
+        <div class="container">
+            <h2>About My Tribe</h2>
+            <p>
+                To me, tribes do not only mean the physical tribes you see in your region, 
+                but also a group or community you are familiar with. Tribes in this aspect 
+                affect my growth and shape my identity as I grow up. 
+            </p>
+            <p>
+                Themes that will be explored are a sense of belonging, identities and 
+                finding balance between different worlds. Through my work, I want to 
+                define myself as someone who values connection and staying true to myself.
+            </p>
+        </div>
+    </section>
+
+    <section id="featured-work" class="featured-work-section">
+        <div class="featured-split-container">
+            <div class="featured-text-side">
+                <h2>Featured Work</h2>
+                <p>Here, I'm going to showcase 4 pieces that are closely related to my identity, tribes and personalities. These pieces define who I am, shape who I become, and what I value.</p>
+                <p>Scroll the preview panel on the right to see glimpses of my projects.</p>
+            </div>
+            
+            <div class="featured-right-side">
+                <div class="featured-preview-panel">
+                    <div class="preview-content">
+                        <div class="preview-wrapper">
+                            <img src="map-preview.png" alt="3D Map">
+                            <p>Map View Exploration: A preview of the interactive 3D map.</p>
+                        </div>
+                        <div class="preview-wrapper">
+                            <img src="playlist.png" alt="3D Map">
+                            <p>Playlist of Identity: A preview of the playlist.</p>
+                        </div>
+                        <div class="preview-wrapper">
+                            <img src="quote.png" alt="3D Map">
+                            <p>A Line From Junior: A preview of the quote.</p>
+                        </div>
+                        <div class="preview-wrapper">
+                            <img src="worlds.webp" alt="3D Map">
+                            <p>Between Two Worlds: A preview of the two worlds I live in.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 80, "density": { "enable": true, "value_area": 800 } },
+                "color": { "value": "#007aff" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.4 },
+                "size": { "value": 4, "random": true },
+                "line_linked": { "enable": true, "distance": 150, "color": "#007aff", "opacity": 0.3, "width": 1.5 },
+                "move": { "enable": true, "speed": 2 }
+            },
+            "interactivity": { "events": { "onhover": { "enable": true, "mode": "grab" } } }
+        });
+    </script>
+    
+    <section class="conclusion-section">
+        <div class="conclusion-container">
+            <h3 class="conclusion-title">Final Reflection</h3>
+            <p class="conclusion-text">
+                This project helped me realize who I am and who I want to become. I will never stop being active—whether it is surfing, golf, or snowboarding, these sports will be a part of my entire life as a way to relax and remind myself of my identity: active, rebellious, and constantly jumping out of the box. 
+            </p>
+            <p class="conclusion-text">
+                I’ve come to understand that we always hold onto our memories; we just need something at hand to conjure them up. Out of everything, I am most proud of the Playlist project because music is woven into our everyday lives—it is the most efficient way to recall memories and remind ourselves of where we’ve been. This journey completely shifted how I view identity; I learned that who we are is defined by much more than just ourselves. It is beautifully shaped by our environment, our memories, and the tribes we belong to.
+            </p>
+            <div class="footer-divider"></div>
+            <p class="footer-credit">Handcrafted by Jimmy &copy; 2026</p>
+        </div>
+    </section>
+
+</body>
+</html>
